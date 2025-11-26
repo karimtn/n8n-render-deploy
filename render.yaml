@@ -31,7 +31,7 @@ services:
       - key: N8N_ENCRYPTION_KEY
         generateValue: true
 
-      # These automatically populate connection details 
+      # These automatically populate connection details
       # for the Render Postgres database defined below
       - key: DB_TYPE
         value: postgresdb
@@ -51,6 +51,20 @@ services:
         fromDatabase:
           name: n8n-db
           property: user
+  # Node.js API Service
+  - type: web
+    plan: free
+    name: node-api
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: N8N_URL
+        value: https://n8n-service.onrender.com
 
 databases:
   - name: n8n-db
