@@ -51,10 +51,11 @@ services:
         fromDatabase:
           name: n8n-db
           property: user
-  # Node.js API Service
+
+  # Socket.IO Server Service (Existing code)
   - type: web
     plan: free
-    name: node-api
+    name: socketio-server
     runtime: node
     buildCommand: npm install
     startCommand: npm start
@@ -65,6 +66,25 @@ services:
         value: 3000
       - key: N8N_URL
         value: https://n8n-service.onrender.com
+
+  # Python Mistral API Service (New service)
+  - type: web
+    plan: free
+    name: mistral-api
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn mistral_api:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: API_KEY
+        generateValue: true
+      - key: DEFAULT_MODEL
+        value: mistral:7b-v0.2
+      - key: MAX_TOKENS
+        value: "4000"
+      - key: DEFAULT_TEMPERATURE
+        value: "0.7"
 
 databases:
   - name: n8n-db
